@@ -1,6 +1,8 @@
-﻿namespace GatewayMicroservices.Models.DAL
+﻿using GatewayMicroservices.Models.DAL.Base;
+
+namespace GatewayMicroservices.Models.DAL
 {
-    public class Route
+    public class Route : AEntityWithOneKey
     {
         public string Endpoint { get; set; }
         public string DestinationUri { get; set; }

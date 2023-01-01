@@ -1,9 +1,8 @@
 using GatewayMicroservices.Infrastructure;
+using GatewayMicroservices.Repositories;
 using GatewayMicroservices.Srvices;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +20,9 @@ builder.Services
     .AddScoped<DestinationService>()
     .AddScoped<RouterService>()
     .AddScoped<SettingService>()
+
+    .AddScoped<SettingRepository>()
+    .AddScoped<RouteRepository>()
 
     .AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>(), AppDomain.CurrentDomain.GetAssemblies())
 
@@ -44,4 +46,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+app.Run(async (context) => {
+    var routerService = app.Services.GetService<RouterService>();
+    var content = await routerService.RouteRequest(context.Request);
+    await context.Response.WriteAsync(await content.Content.ReadAsStringAsync());
+});

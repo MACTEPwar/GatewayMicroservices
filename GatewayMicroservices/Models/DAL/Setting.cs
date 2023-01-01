@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GatewayMicroservices.Models.DAL.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace GatewayMicroservices.Models.DAL
 {
-    public class Setting
+    public class Setting : AEntityWithOneKey
     {
         [Required]
         public string Key { get; set; }

@@ -5,6 +5,8 @@ using GatewayMicroservices.Models.DAL;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Primitives;
 using System.Net;
+using System.Runtime.CompilerServices;
+using GatewayMicroservices.Repositories;
 
 namespace GatewayMicroservices.Srvices
 {
@@ -12,27 +14,22 @@ namespace GatewayMicroservices.Srvices
     {
         private List<Models.DAL.Route> _routes;
         private readonly DestinationService _authenticationService;
-        private readonly SettingService _settingService;
-        private readonly IDbContextFactory<DbAppContext> _dbContextFactory;
-        private readonly IMapper _mapper;
+        private readonly SettingRepository _settingRepository;
+        private readonly RouteRepository _routeRepository;
 
-        public RouterService(IDbContextFactory<DbAppContext> dbContextFactory, DestinationService destinationService, IMapper mapper, SettingService settingService)
+        public RouterService(DestinationService destinationService, SettingRepository settingRepository, RouteRepository routeRepository)
         {
-            _dbContextFactory = dbContextFactory;
             _authenticationService = destinationService;
-            _mapper = mapper;
-            _settingService = settingService;
+            _settingRepository = settingRepository;
+            _routeRepository = routeRepository;
 
             LoadRoutes();
-            _authenticationService.Uri = _settingService.GetValueByKey<string>("AuthUri").Result;
+            _authenticationService.Uri = settingRepository.GetValueByKey<string>("AuthUri").Result;
         }
 
         private void LoadRoutes()
         {   
-            using (var _dbContext = _dbContextFactory.CreateDbContext())
-            {
-                this._routes = _dbContext.Route.ToList();
-            }
+            this._routes = _routeRepository.GetList().ToList();
         }
 
         public async Task<HttpResponseMessage> RouteRequest(HttpRequest request)
