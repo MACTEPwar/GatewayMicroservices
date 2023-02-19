@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GatewayMicroservices.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class Init : ControllerBase
+    [Route("api/[controller]")]
+    public class InitController : ControllerBase
     {
+        [HttpGet(Name = "InitRoutes")]
         public bool InitRoutes()
         {
             try
