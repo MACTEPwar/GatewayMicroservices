@@ -24,7 +24,8 @@ namespace GatewayMicroservices.Srvices
             _routeRepository = routeRepository;
 
             LoadRoutes();
-            _authenticationService.Uri = settingRepository.GetValueByKey<string>("AuthUri").Result;
+            var test = settingRepository.GetValueByKey<string>("AuthUri").Result;
+            _authenticationService.Uri = test;
         }
 
         private void LoadRoutes()
@@ -34,8 +35,9 @@ namespace GatewayMicroservices.Srvices
 
         public async Task<HttpResponseMessage> RouteRequest(HttpRequest request)
         {
-            string path = request.Path.ToString();
-            string basePath = '/' + path.Split('/')[1];
+            var path = request.Path.ToString().Split('/');
+            //string basePath = '/' + path.Split('/')[1];
+            var basePath = $"{path[1]}/{path[2]}/{path[3]}";
 
             try
             {

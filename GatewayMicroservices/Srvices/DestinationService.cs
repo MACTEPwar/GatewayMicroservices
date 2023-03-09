@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using System.Net.Http;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
 
 namespace GatewayMicroservices.Srvices
 {
@@ -28,18 +31,19 @@ namespace GatewayMicroservices.Srvices
 
         public async Task<HttpResponseMessage> SendRequest(HttpRequest request)
         {
-            string requestContent;
-            using (Stream receiveStream = request.Body)
-            {
-                using (StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8))
-                {
-                    requestContent = readStream.ReadToEnd();
-                }
-            }
-
             HttpClient client = new HttpClient();
             HttpRequestMessage newRequest = new HttpRequestMessage(new HttpMethod(request.Method), CreateDestinationUri(request));
+            newRequest.Content = new StreamContent(request.Body);
+            newRequest.Content.Headers.ContentType = new MediaTypeHeaderValue(request.ContentType);
+
+
+            foreach (var header in request.Headers)
+            {
+                newRequest.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            }
             HttpResponseMessage response = await client.SendAsync(newRequest);
+
+
 
             return response;
         }
@@ -53,7 +57,7 @@ namespace GatewayMicroservices.Srvices
             string[] endpointSplit = requestPath.Substring(1).Split('/');
 
             if (endpointSplit.Length > 1)
-                endpoint = endpointSplit[1];
+                endpoint = $"{endpointSplit[0]}/{endpointSplit[1]}/{endpointSplit[2]}";
 
             return Uri + endpoint + queryString;
         }

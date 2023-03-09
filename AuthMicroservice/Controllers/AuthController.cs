@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
 
 namespace AuthMicroservice.Controllers
 {
@@ -34,18 +35,30 @@ namespace AuthMicroservice.Controllers
 
             var now = DateTime.UtcNow;
 
-            var jwt = new JwtSecurityToken(
+            var jwtWithSecurity = new JwtSecurityToken(
                    issuer: AuthOptions.ISSUER,
                    audience: AuthOptions.AUDIENCE,
                    notBefore: now,
                    claims: identity.Claims,
                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            return new OkObjectResult(new TokenResponse()
+            var jwtWithoutSecurity = new JwtSecurityToken(
+                issuer: AuthOptions.ISSUER,
+                audience: AuthOptions.AUDIENCE,
+                notBefore: now,
+                claims: identity.Claims,
+                expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                signingCredentials: null
+            );
+
+            var encodedJwtWithSecurity = new JwtSecurityTokenHandler().WriteToken(jwtWithSecurity);
+            var encodedJwtWithoutSecurity = new JwtSecurityTokenHandler().WriteToken(jwtWithoutSecurity);
+
+            return Ok(new TokenResponse()
             {
-                AccessToken = encodedJwt,
+                AccessTokenSec = encodedJwtWithSecurity,
+                AccessToken = encodedJwtWithoutSecurity,
                 UserName = tokenRequest.Login,
             });
         }
