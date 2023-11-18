@@ -16,6 +16,8 @@ builder.Services.AddDbContextFactory<DbAppContext>(options =>
         ServiceLifetime.Scoped
     );
 
+builder.Services.AddAutoMapper(options => options.AddProfile<MappingProfile>());
+
 // Add services to the container.
 builder.Services.IncludeRepositories();
 builder.Services.IncludeServices();
@@ -37,8 +39,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseAuthorization();
 
 app.MapControllers();

@@ -33,7 +33,23 @@ builder.Services
         ServiceLifetime.Scoped
     );
 
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+}));
+
 var app = builder.Build();
+
+app.UseCors("MyPolicy");
+
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyMethod();
+    options.AllowAnyHeader();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

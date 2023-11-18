@@ -7,5 +7,6 @@ namespace GatewayMicroservices.Models.DAL
         public string Endpoint { get; set; }
         public string DestinationUri { get; set; }
         public bool RequiresAuthentication { get; set; }
+        public string ReplaceMode { get; set; }
     }
 }

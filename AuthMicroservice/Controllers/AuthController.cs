@@ -13,9 +13,11 @@ namespace AuthMicroservice.Controllers
     public class AuthController : Controller
     {
         public readonly AuthService _authService;
-        public AuthController(AuthService authService)
+        public readonly ScopeService _scopeService;
+        public AuthController(AuthService authService, ScopeService scopeService)
         {
             _authService = authService;
+            _scopeService = scopeService;
         }
 
         [HttpGet("Test")]
@@ -61,6 +63,27 @@ namespace AuthMicroservice.Controllers
                 AccessToken = encodedJwtWithoutSecurity,
                 UserName = tokenRequest.Login,
             });
+        }
+
+        [HttpGet("GetAuthSettings")]
+        public IActionResult GetAuthSettings()
+        {
+            var obj = new
+            {
+                RequireHttpsMetadata = false,
+                ValidateIssuer = true,
+                ValidIssuer = AuthOptions.ISSUER,
+                ValidateAudience = true,
+                ValidAudience = AuthOptions.AUDIENCE,
+                ValidateLifetime = true,
+                IssuerSigningKey = "SymmetricSecurityKey",
+                ValidateIssuerSigningKey = true,
+                Key = AuthOptions.KEY,
+                Lifetime = AuthOptions.LIFETIME,
+                Scopes = _scopeService.GetFileterdList().Select(s => s.Name).ToList()
+            };
+
+            return Ok(obj);
         }
     }
 }

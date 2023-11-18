@@ -7,6 +7,7 @@ namespace AuthMicroservice.Services.Infrostructure
         public static IServiceCollection IncludeServices(this IServiceCollection service)
         {
             service.AddScoped<UserService>();
+            service.AddScoped<ScopeService>();
             service.AddScoped<AuthService>();
             return service;
         }

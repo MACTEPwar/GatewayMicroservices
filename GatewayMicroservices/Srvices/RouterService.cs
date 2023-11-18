@@ -39,11 +39,14 @@ namespace GatewayMicroservices.Srvices
             //string basePath = '/' + path.Split('/')[1];
             var basePath = $"{path[1]}/{path[2]}/{path[3]}";
 
+            Models.DAL.Route route = null;
+
             try
             {
-                var route = _routes.First(r => r.Endpoint.Equals(basePath));
+                route = _routes.First(r => r.Endpoint.Equals(basePath));
                 _authenticationService.Uri = route.DestinationUri;
                 _authenticationService.RequiresAuthentication = route.RequiresAuthentication;
+                _authenticationService.ReplaceMode = route.ReplaceMode;
             }
             catch
             {

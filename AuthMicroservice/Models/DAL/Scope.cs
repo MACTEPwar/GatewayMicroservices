@@ -6,7 +6,7 @@ namespace AuthMicroservice.Models.DAL
     {
         public string Name { get; set; }
         public Scope ParentScope { get; set; }
-        public Guid ParentScopeId { get; set; }
+        public Guid? ParentScopeId { get; set; }
 
         public virtual ICollection<User> Users{ get; set; }
     }
