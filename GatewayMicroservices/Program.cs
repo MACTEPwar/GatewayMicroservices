@@ -65,14 +65,17 @@ app.MapControllers();
 try
 {
     app.Run(async (context) =>
-    {   
-        using (IServiceScope scope = app.Services.CreateScope())
+    {
+        if (!context.Request.Path.StartsWithSegments("/swagger"))
         {
-            //var routerService = app.Services.GetService<RouterService>();
-            RouterService routerService = scope.ServiceProvider.GetRequiredService<RouterService>();
-            var content = await routerService.RouteRequest(context.Request);
-            await context.Response.WriteAsync(await content.Content.ReadAsStringAsync());
-        }     
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                //var routerService = app.Services.GetService<RouterService>();
+                RouterService routerService = scope.ServiceProvider.GetRequiredService<RouterService>();
+                var content = await routerService.RouteRequest(context.Request);
+                await context.Response.WriteAsync(await content.Content.ReadAsStringAsync());
+            }
+        }
     });
 
     app.Run();
