@@ -5,7 +5,7 @@ ENV ASPNETCORE_ENVIRONMENT=docker
 ADD . /app/build
 WORKDIR /app/build
 RUN dotnet restore
-RUN dotnet publish /app/build/GatewayMicroservices/GatewayMicroservices.csproj -c Release -o ../out
+RUN dotnet publish /app/build/GatewayMicroservices.csproj -c Release -o ../out
 
 #VOLUME /app/out/appsettings.docker.json
 #VOLUME /app/out/logs
