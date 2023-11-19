@@ -35,9 +35,19 @@ namespace GatewayMicroservices.Srvices
 
         public async Task<HttpResponseMessage> RouteRequest(HttpRequest request)
         {
-            var path = request.Path.ToString().Split('/');
-            //string basePath = '/' + path.Split('/')[1];
-            var basePath = $"{path[1]}/{path[2]}/{path[3]}";
+            string[] path;
+            string basePath = string.Empty;
+            try
+            {
+                path = request.Path.ToString().Split('/');
+                //string basePath = '/' + path.Split('/')[1];
+                basePath = $"{path[1]}/{path[2]}/{path[3]}";
+            }
+            catch
+            {
+                return ConstructErrorMessage($"Bad path {request.Path.ToString()}");
+            }
+           
 
             Models.DAL.Route route = null;
 
